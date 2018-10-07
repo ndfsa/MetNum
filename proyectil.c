@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
         } while (yPos[1] >= fl);
         fclose(fp);
         if (fabs(xMax - dist) / dist * 100 <= error) {
-            printf("angle: %0.8f time: %0.3f\n", angle, fTime);
+            printf("angle: %0.8f rad  time: %0.3f\n", angle, fTime);
             solution = 1;
             break;
         }
