@@ -4,7 +4,7 @@
 #include <limits.h>
 #include <stdlib.h>
 /* * * * * * * * * * * * * * * * * * * *
-* Integracion numerica en C-Linux      *
+* Series de Fourier en C-Linux         *
 * Universidad: UPB                     *
 * Autores: V. Loza, S. Marzana.        *
 * Fecha: 2/10/2018                    *
