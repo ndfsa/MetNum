@@ -1,0 +1,32 @@
+open window 900, 600
+window origin "cc"
+c_origin_x = -200
+c_origin_y = -140
+long = 300
+k=(long/2)*(1-(cos(asin(1/4))))
+container()
+
+
+
+sub container()
+    draw_circle()
+    draw_square()
+    draw_pipe()
+end sub
+sub draw_square()
+    rectangle c_origin_x+(long/2), c_origin_y+(3*long/8),c_origin_x+(3*long/2), c_origin_y+(11*long/8)
+    clear line c_origin_x+long-k, c_origin_y+(3*long/8), c_origin_x+(3*long/4)-k, c_origin_y+(3*long/8)
+end sub
+sub draw_circle()
+    circle c_origin_x, c_origin_y, long/2
+    color 255, 255, 255
+    fill rectangle c_origin_x+(long/2)-k-1, c_origin_y-(long/8), c_origin_x+(long/2)+1, c_origin_y+(long/8)
+    color 0,0,0
+end sub
+sub draw_pipe()
+    line c_origin_x+(long/2)-k, c_origin_y-(long/8), c_origin_x+long-k, c_origin_y-(long/8)
+    line c_origin_x+(long/2)-k, c_origin_y+(long/8), c_origin_x+long-(long/4)-k, c_origin_y+(long/8)
+
+    line c_origin_x+long-k, c_origin_y-(long/8), c_origin_x+long-k, c_origin_y+(3*long/8)
+    line c_origin_x+long-(long/4)-k, c_origin_y+(long/8), c_origin_x+(3*long/4)-k, c_origin_y+(3*long/8)
+end sub

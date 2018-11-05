@@ -1,0 +1,49 @@
+rem open window 800, 600
+rem window origin "cc"
+tam = 100000
+l = 10
+angle = 2*pi*ran()
+rad = 10
+dim x0(tam)
+dim y0(tam)
+dim x(tam)
+dim y(tam)
+lim = 200
+dim d(tam, 2)
+dim c(tam)
+for i = 0 to tam
+  d(i,1) = 0
+next i
+rem circle 0, 0, lim
+dim cont(tam)
+flag = 0
+while(flag < tam)
+  rem circle_color = 0 + (155*ran())
+  rem color circle_color, circle_color, circle_color
+  rem clear window
+  for n = 0 to tam-1
+    if(d(n, 1) = 0) then
+      x(n) = x0(n) + (l * cos(angle))
+      y(n) = y0(n) + (l * sin(angle))
+      rem fill circle x(n), y(n), rad
+      x0(n) = x(n)
+      y0(n) = y(n)
+      angle = 2*pi*ran()
+      d(n,0) = sqrt((x(n)*x(n)) + (y(n)*y(n)))
+      cont(n) = cont(n) + 1
+    endif
+  next n
+  for j = 0 to tam-1
+    if(d(j,1) = 0 and d(j,0) > lim - rad ) then
+      d(j,1) = 1
+      flag = flag + 1
+      print j + 1, flag
+    endif
+  next j
+  rem wait(0.01)
+wend
+open "datos.dat" for writing as 1
+for i = 0 to tam-1
+  print #1 cont(i)
+next i
+close #1

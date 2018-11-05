@@ -1,0 +1,14 @@
+open window 800, 600
+window origin "lb"
+tam = 10000
+dim a(tam, 2)
+rad = 10
+backcolor 168, 255, 160
+clear window
+color 239, 160, 255
+for n = 1 to tam
+  a (n, 0)= int(rad + ((800-(2 * rad)) * ran()))
+  a (n, 1)= int(rad + ((600-(2 * rad)) * ran()))
+  fill circle a(n, 0), a(n, 1), rad
+  wait(0.01)
+next n

@@ -1,0 +1,193 @@
+rem **********************************************************
+tam_a = 100          rem cantidad de particulas a
+tam_b = 100          rem cantidad de particulas b
+l_a = 5              rem camino libre medio de las particulas a
+l_b = 10             rem camino libre medio de las particulas b
+rad_a = 5            rem tamanho de las particulas a
+rad_b = 10           rem tamanho de las particulas b
+p_a = 10             rem porcentaje de particulas a en el cuadrado
+p_b = 10             rem porcentaje de particulas b en el circulo
+t = 0.05             rem tiempo del comando wait
+graphics_flag = 1    rem graficos 1: encendido, 0: apagado
+output = 0           rem output en consola: 0, en archivo: 1
+rem *********************************************************
+
+dim pos(tam_a + tam_b,3)
+
+if (graphics_flag = 1) then
+    open window 900, 600
+    window origin "cc"
+end if
+if output = 1 then
+    open "gases.dat" for writing as 1
+end if
+long = 300
+
+c_origin_x = -200
+c_origin_y = -140
+
+s_origin_x = c_origin_x + long
+s_origin_y = c_origin_y + (7*long/8)
+
+for i = 0 to tam_a - 1
+    pos(i,0) = c_origin_x
+    pos(i,1) = c_origin_y
+    pos(i,2) = 1
+next i
+
+for i = tam_a to tam_a + tam_b - 1
+    pos(i,0) = s_origin_x
+    pos(i,1) = s_origin_y
+    pos(i,2) = 2
+next i
+
+k=(long/2)*(1-(cos(asin(1/4))))
+
+x = 0.0
+y = 0.0
+if(graphics_flag) then
+    container()
+end if
+cc = 0
+while(c_circle_2/tam_b < p_a/100 or c_square_1/tam_a < p_b/100)
+    rem **resetear contadores**
+    c_circle_1 = 0
+    c_circle_2 = 0
+    c_square_1 = 0
+    c_square_2 = 0
+    c_pipe_1 = 0
+    c_pipe_2 = 0
+
+    rem **mover particulas**
+
+    for i = 0 to tam_a + tam_b - 1
+        if(pos(i, 2) = 1) then
+            l = l_a
+            rad = rad_a
+        else
+            l = l_b
+            rad = rad_b
+        end if
+
+        angle = pi*2*ran()
+        verify = 1
+        while(verify = 1)
+            x = pos(i, 0) + (l * cos(angle))
+            y = pos(i, 1) + (l * sin(angle))
+            bool1 = y >= c_origin_y+(long/8) and y <= c_origin_y+(3*long/8)+rad
+            bool2 = x >= c_origin_x+(3*long/4)-k+rad and x <= c_origin_x+long-k-rad
+            if(bool1 and bool2) then
+                if(pos(i, 2) = 1) then
+                    c_pipe_1 = c_pipe_1 + 1
+                else
+                    c_pipe_2 = c_pipe_2 + 1
+                end if
+                verify = 0
+            else
+                bool1 = y <= c_origin_y+(long/8)-rad and y >= c_origin_y-(long/8)+rad
+                bool2 = x <= c_origin_x+(3*long/4)-k and x >= c_origin_x+(long/2)-k
+                if(bool1 and bool2) then
+                    if(pos(i, 2) = 1) then
+                        c_pipe_1 = c_pipe_1 + 1
+                    else
+                        c_pipe_2 = c_pipe_2 + 1
+                    end if
+                    verify = 0
+                else
+                    bool1 = y < c_origin_y+(long/8) and y >= c_origin_y-(long/8)+rad
+                    bool2 = x <= c_origin_x+long-k-rad and x > c_origin_x+(3*long/4)-k
+                    if(bool1 and bool2) then
+                        if(pos(i, 2) = 1) then
+                            c_pipe_1 = c_pipe_1 + 1
+                        else
+                            c_pipe_2 = c_pipe_2 + 1
+                        end if
+                        verify = 0
+                    else
+                        if((x-c_origin_x)^2 + (y-c_origin_y)^2 < (long/2-rad)^2) then
+                            if(pos(i, 2) = 1) then
+                                c_circle_1 = c_circle_1 + 1
+                            else
+                                c_circle_2 = c_circle_2 + 1
+                            end if
+                            verify = 0
+                        else
+                            alpha = atan((y-s_origin_y)/(x-s_origin_x))
+                            d = (long/2-rad)/cos(alpha - ((pi/2)*my_floor(((4*alpha)+pi)/(2*pi))))
+                            if((x-s_origin_x)^2 + (y-s_origin_y)^2 < d^2) then
+                                if(pos(i, 2) = 1) then
+                                    c_square_1 = c_square_1 + 1
+                                else
+                                    c_square_2 = c_square_2 + 1
+                                end if
+                                verify = 0
+                            else
+                                angle = 2* pi* ran()
+                            end if
+                        end if
+                    end if
+                end if
+            end if
+        wend
+        if (graphics_flag = 1) then
+            clear fill circle pos(i, 0),pos(i, 1), rad
+        end if
+        pos(i, 0) = x
+        pos(i, 1) = y
+    next i
+
+    rem **dibujar particulas**
+
+    if (graphics_flag = 1) then
+        cc = cc+1
+        if(cc>30)then
+            container()
+            cc = 0
+        end if
+        color 155, 50, 50
+        for i = 0 to tam_a - 1
+            fill circle pos(i, 0),pos(i, 1), rad_a
+        next i
+        color 50, 50, 155
+        for i = tam_a to tam_a + tam_b - 1
+            fill circle pos(i, 0),pos(i, 1), rad_b
+        next i
+        if(output = 1) then
+            print #1 c_circle_1, c_circle_2, c_square_1, c_square_2
+        else
+            print c_circle_1, c_circle_2, c_square_1, c_square_2
+        end if
+        wait(t)
+    else
+        if(output = 1) then
+            print #1 c_circle_1, c_circle_2, c_square_1, c_square_2
+        else
+            print c_circle_1, c_circle_2, c_square_1, c_square_2
+        end if
+    end if
+wend
+if(output = 1) then
+    close #1
+end if
+
+rem **subproceso para dibujar el contenedor**
+
+sub container()
+    color 0,0,0
+    rectangle c_origin_x+(long/2), c_origin_y+(3*long/8), c_origin_x+(3*long/2), c_origin_y+(11*long/8)
+    clear line c_origin_x+long-k, c_origin_y+(3*long/8), c_origin_x+(3*long/4)-k, c_origin_y+(3*long/8)
+    circle c_origin_x, c_origin_y, long/2
+    color 255, 255, 255
+    clear fill rectangle c_origin_x+(long/2)-k-1, c_origin_y-(long/8), c_origin_x+(long/2)+1, c_origin_y+(long/8)
+    color 0,0,0
+
+    line c_origin_x+(long/2)-k, c_origin_y-(long/8), c_origin_x+long-k, c_origin_y-(long/8)
+    line c_origin_x+(long/2)-k, c_origin_y+(long/8), c_origin_x+long-(long/4)-k, c_origin_y+(long/8)
+
+    line c_origin_x+long-k, c_origin_y-(long/8), c_origin_x+long-k, c_origin_y+(3*long/8)
+    line c_origin_x+(3*long/4)-k, c_origin_y+(long/8), c_origin_x+(3*long/4)-k, c_origin_y+(3*long/8)
+end sub
+
+sub my_floor(n)
+    return int(n)-(n<0 and mod(n, 1) <> 0)
+end sub

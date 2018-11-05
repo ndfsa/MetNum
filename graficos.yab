@@ -1,0 +1,7 @@
+open window 800, 500
+window origin "cc"
+circle 0, 0, 100
+line -400, 0, 400, 0
+line 0, -250, 0, 250
+line -50*(sqrt(2)), 50*(sqrt(2)), 50*(sqrt(2)), -50*(sqrt(2))
+input ""x

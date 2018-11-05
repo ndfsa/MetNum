@@ -1,0 +1,209 @@
+rem ********************************************************
+n = 40              rem cantidad de depredadores
+m = 80              rem cantidad de presas
+l_a = 15            rem camino libre medio de los depredadores
+l_b = 15            rem camino libre medio de las presas
+rad_a = 5           rem radio de los depredadores
+rad_b = 5           rem radio de las presas
+hard_limit = 500    rem limite de depredadores/presas
+rc_a = 100          rem ciclos antes de la reproduccion, depredadores
+rc_b = 80           rem ciclos antes de la reproduccion, presas
+offspring_a = 1     rem cantidad de crias, depredadores
+offspring_b = 1     rem cantidad de crias, presas
+energy = 60         rem energia de depredador
+chance = 60         rem probabilidad de caza
+d = rad_a + rad_b   rem distancia de caza
+t = 0.01            rem tiempo del comando wait
+graphics_flag = 1   rem graficos 1: encendido, 0: apagado
+output = 0          rem output en consola: 0, en archivo: 1
+edh = 0             rem energy dependent hunting
+rem ********************************************************
+h = 600
+w = 600
+if(graphics_flag = 1) then
+    open window w, h
+    window origin "cc"
+end if
+dim state_a(hard_limit, 5)
+dim state_b(hard_limit, 3)
+x = 0.0
+y = 0.0
+if output = 1 then
+    open "depredador_presa.dat" for writing as 1
+end if
+c_predators = n
+c_prey = m
+
+for i = 0 to n - 1
+    state_a(i, 0) = (w/2)*(-1+(2*ran()))
+    state_a(i, 1) = (h/2)*(-1+(2*ran()))
+    state_a(i, 2) = 1
+    state_a(i, 4) = energy
+next i
+for i = 0 to m - 1
+    state_b(i, 0) = (w/2)*(-1+(2*ran()))
+    state_b(i, 1) = (h/2)*(-1+(2*ran()))
+    state_b(i, 2) = 1
+next i
+if(graphics_flag = 1) then
+    color 155, 50, 50
+    for i = 0 to hard_limit - 1
+        if (state_a(i, 2) = 1) then
+            fill circle state_a(i, 0), state_a(i, 1), rad_a
+        end if
+    next i
+    color 50, 155, 50
+    for i = 0 to hard_limit - 1
+        if (state_b(i, 2) = 1) then
+            fill circle state_b(i, 0), state_b(i, 1), rad_b
+        end if
+    next i
+end if
+cycle_count = 0
+if output = 1 then
+    print #1 cycle_count, c_prey, c_predators
+else
+    print cycle_count, c_prey, c_predators
+end if
+while(c_predators > 0 and c_prey > 0)
+    for i = 0 to hard_limit - 1
+        if (state_a(i, 2) = 1) then
+            angle = pi*2*ran()
+            x = state_a(i,0) + (l_a * cos(angle))
+            y = state_a(i,1) + (l_a * sin(angle))
+            if(x >= (w/2) - rad_a or x <= -(w/2) + rad_a) then
+                x = state_a(i, 0) - (l_a * cos(angle))
+            end if
+            if(y >= (h/2) - rad_a or y <= -(h/2) + rad_a) then
+                y = state_a(i, 1) - (l_a * sin(angle))
+            end if
+            if(state_a(i, 4) <= 0) then
+                state_a(i, 2) = 0
+                state_a(i, 3) = 0
+                c_predators = c_predators - 1
+                rem clear fill circle state_a(i, 0), state_a(i, 1), rad_a
+                rem print "prey: ", c_prey, " - predators: ", c_predators
+            end if
+            if(state_a(i,3) >= rc_a) then
+                k = 0
+                cont = 0
+                while(k < offspring_a and cont < hard_limit)
+                    if(state_a(cont, 2) = 0)then
+                        state_a(cont, 0) = state_a(i,0)
+                        state_a(cont, 1) = state_a(i,1)
+                        state_a(cont, 2) = 1
+                        state_a(cont, 3) = 0
+                        state_a(cont, 4) = energy
+                        k = k + 1
+                        cont = cont + 1
+                        c_predators = c_predators + 1
+                    else
+                        cont = cont + 1
+                    end if
+                wend
+                state_a(i,3) = 0
+            end if
+
+
+            if(graphics_flag = 1) then
+                rem clear fill circle state_a(i, 0), state_a(i, 1), rad_a
+            end if
+            state_a(i,0) = x
+            state_a(i,1) = y
+            state_a(i,3) = state_a(i,3) + 1
+            state_a(i,4) = state_a(i,4) - 1
+        end if
+    next i
+
+    for i = 0 to hard_limit - 1
+        if (state_b(i, 2) = 1) then
+            angle = pi*2*ran()
+            x = state_b(i,0) + (l_b * cos(angle))
+            y = state_b(i,1) + (l_b * sin(angle))
+            if(x >= (w/2) - rad_b or x <= -(w/2) + rad_b) then
+                x = state_b(i, 0) - (l_b * cos(angle))
+            end if
+            if(y >= (h/2) - rad_b or y <= -(h/2) + rad_b) then
+                y = state_b(i, 1) - (l_b * sin(angle))
+            end if
+            if(state_b(i,3) >= rc_b) then
+                k = 0
+                cont = 0
+                while(k < offspring_b and cont < hard_limit)
+                    if(state_b(cont,2) = 0)then
+                        state_b(cont,0) = state_b(i,0)
+                        state_b(cont,1) = state_b(i,1)
+                        state_b(cont, 2) = 1
+                        state_b(cont, 3) = 0
+                        k = k + 1
+                        cont = cont + 1
+                        c_prey = c_prey + 1
+                    else
+                        cont = cont + 1
+                    end if
+                wend
+                state_b(i,3) = 0
+            end if
+            if(graphics_flag = 1) then
+                rem clear fill circle state_b(i, 0), state_b(i, 1), rad_b
+            end if
+            state_b(i,0) = x
+            state_b(i,1) = y
+            state_b(i,3) = state_b(i,3) + 1
+        end if
+    next i
+    for i = 0 to hard_limit - 1
+        for j = 0 to hard_limit - 1
+            bool1 = state_a(i, 2) = 1 and state_b(j, 2) = 1 and state_a(i,5) = 0
+            bool2 = (edh = 0 or state_a(i,4) < energy/2)
+            if (bool1 and bool2) then
+                appart = (state_a(i,0)-state_b(j,0))^2 + (state_a(i,1)-state_b(j,1))^2
+                if(appart <= d^2)then
+                    luck = 100*ran()
+                    if(luck <= chance) then
+                        state_a(i, 4) = energy
+                        state_a(i, 5) = 1
+                        state_b(j, 2) = 0
+                        c_prey = c_prey - 1
+                    else
+                        state_a(i, 5) = 1
+                    end if
+                end if
+            end if
+        next j
+    next i
+
+    if output = 1 then
+        print #1 cycle_count, c_prey, c_predators
+    else
+        print cycle_count, c_prey, c_predators
+    end if
+
+    if(graphics_flag = 1) then
+        clear window
+        color 155, 50, 50
+        for i = 0 to hard_limit - 1
+            state_a(i, 5) = 0
+            if (state_a(i, 2) = 1) then
+                fill circle state_a(i, 0), state_a(i, 1), rad_a
+            end if
+        next i
+        color 50, 155, 50
+        for i = 0 to hard_limit - 1
+            if (state_b(i, 2) = 1) then
+                fill circle state_b(i, 0), state_b(i, 1), rad_b
+            end if
+        next i
+    else
+        for i = 0 to hard_limit - 1
+            state_a(i, 5) = 0
+        next i
+    end if
+    cycle_count = cycle_count + 1
+    if(graphics_flag = 1) then
+        wait(t)
+    end if
+wend
+if(output = 1) then
+    close #1
+end if

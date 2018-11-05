@@ -1,0 +1,8 @@
+open window 900, 600
+window origin "cc"
+
+for i = -100 to 100 step 1
+    for j = -100 to 100 step 1
+        circle i,j, 1+max(abs(x),abs(y))
+    next j
+next i

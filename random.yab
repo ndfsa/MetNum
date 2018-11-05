@@ -1,0 +1,20 @@
+dado = 0
+cont = 0
+
+open "datos.dat" for writing as 1
+
+for z = 1 to 100
+  for x = 1 to 100000
+    for y = 1 to 5
+      dado = dado + int(1 + (6*ran()))
+    next y
+    if(dado = 30) then
+      cont = cont + 1
+    endif
+    dado = 0
+  next x
+  print #1 cont
+  cont = 0
+next z
+
+close #1

@@ -1,0 +1,8 @@
+input a
+b = -1
+
+if(b^a = b) then
+  print "impar"
+else
+  print "par"
+endif
