@@ -1,0 +1,26 @@
+open window 800, 600
+window origin "cc"
+tam = 100
+stp = 3
+dim a(1, 2)
+rad = 30
+backcolor 168, 255, 160
+clear window
+dim x0(tam)
+dim y0(tam)
+dim x(tam)
+dim y(tam)
+l = 10
+angle = 2*pi*ran()
+for p = 0 to 10000
+  rem clear window
+  for n = 0 to tam-1
+    x(n) = x0(n) + (l * cos(angle))
+    y(n) = y0(n) + (l * sin(angle))
+    fill circle x(n), y(n), rad
+    x0(n) = x(n)
+    y0(n) = y(n)
+    angle = 2*pi*ran()
+  next n
+  wait(0.02)
+next p

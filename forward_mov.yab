@@ -1,0 +1,34 @@
+open window 900, 600
+window origin "cc"
+
+tam = 100
+l = 5
+rad = 6
+limit = pi*150/180
+
+dim x0(tam)
+dim y0(tam)
+x = 0
+y = 0
+
+open "datos.dat" for writing as 1
+while(true)
+  circle_color = 0 + (90*ran())
+  color circle_color, circle_color, circle_color
+  rem clear window
+  for n = 0 to tam-1
+    angle = (-limit) + (limit*2*ran())
+
+    x = x0(n) + (l * cos(angle))
+    y = y0(n) + (l * sin(angle))
+
+    fill circle x, y, rad
+
+    x0(n) = x
+    y0(n) = y
+
+    print #1 angle*180/pi
+  next n
+  wait(0.01)
+wend
+close #1

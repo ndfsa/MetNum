@@ -1,0 +1,13 @@
+dim prob(37)
+for j = 0 to 3000000
+    for i = 1 to 5
+        dado = dado + int(1 + (6*ran()))
+    next i
+    prob(dado) = prob(dado) + 1
+    dado = 0
+next j
+acc = 0
+for i = 0 to 36
+    acc = acc + prob(i)/30000
+    print i, " - ", prob(i)/30000, "%", " acc: ", acc," ", 100-acc
+next i
